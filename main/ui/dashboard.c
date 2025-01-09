@@ -293,9 +293,9 @@ gui_activity_t* make_uninitialised_settings_activity(void)
               { .txt = "USB Storage", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_USBSTORAGE },
 #endif
               { .txt = "BIP39 Passphrase", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_BIP39_PASSPHRASE },
-              { .txt = "Settings", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_PREFS } };
+              { .txt = "Ayarlar", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_PREFS } };
 
-    return make_menu_activity("Options", hdrbtns, 2, menubtns, sizeof(menubtns) / sizeof(btn_data_t));
+    return make_menu_activity("Seçenekler", hdrbtns, 2, menubtns, sizeof(menubtns) / sizeof(btn_data_t));
 }
 
 gui_activity_t* make_locked_settings_activity(void)
@@ -308,7 +308,7 @@ gui_activity_t* make_locked_settings_activity(void)
               { .txt = "Device", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_DEVICE },
               { .txt = "Temporary Signer", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_TEMPORARY_WALLET_LOGIN } };
 
-    return make_menu_activity("Options", hdrbtns, 2, menubtns, sizeof(menubtns) / sizeof(btn_data_t));
+    return make_menu_activity("Seçenekler", hdrbtns, 2, menubtns, sizeof(menubtns) / sizeof(btn_data_t));
 }
 
 gui_activity_t* make_unlocked_settings_activity(void)
@@ -323,7 +323,7 @@ gui_activity_t* make_unlocked_settings_activity(void)
 #endif
         { .txt = "Authentication", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_AUTHENTICATION } };
 
-    return make_menu_activity("Options", hdrbtns, 2, menubtns, sizeof(menubtns) / sizeof(btn_data_t));
+    return make_menu_activity("Seçenekler", hdrbtns, 2, menubtns, sizeof(menubtns) / sizeof(btn_data_t));
 }
 
 gui_activity_t* make_wallet_settings_activity(void)
@@ -359,7 +359,7 @@ gui_activity_t* make_device_settings_activity(void)
     btn_data_t hdrbtns[] = { { .txt = "=", .font = JADE_SYMBOLS_16x16_FONT, .ev_id = BTN_SETTINGS_DEVICE_EXIT },
         { .txt = NULL, .font = GUI_DEFAULT_FONT, .ev_id = GUI_BUTTON_EVENT_NONE } };
 
-    btn_data_t menubtns[] = { { .txt = "Settings", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_PREFS },
+    btn_data_t menubtns[] = { { .txt = "Ayarlar", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_PREFS },
         { .txt = "Factory Reset", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_RESET },
         { .txt = "Info", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_INFO } };
 
@@ -392,7 +392,7 @@ gui_activity_t* make_prefs_settings_activity(const bool initialised_and_locked, 
         menubtns[2].ev_id = BTN_SETTINGS_CHANGE_PIN;
     }
 
-    return make_menu_activity("Settings", hdrbtns, 2, menubtns, 3);
+    return make_menu_activity("Ayarlar", hdrbtns, 2, menubtns, 3);
 }
 
 gui_activity_t* make_display_settings_activity(void)
@@ -467,7 +467,7 @@ gui_activity_t* make_pinserver_activity(void)
     btn_data_t hdrbtns[] = { { .txt = "=", .font = JADE_SYMBOLS_16x16_FONT, .ev_id = BTN_SETTINGS_PINSERVER_EXIT },
         { .txt = "?", .font = GUI_TITLE_FONT, .ev_id = BTN_SETTINGS_PINSERVER_HELP } };
 
-    btn_data_t menubtns[] = { { .txt = "Settings", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_PINSERVER_SHOW },
+    btn_data_t menubtns[] = { { .txt = "Ayarlar", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_PINSERVER_SHOW },
         { .txt = "Scan Oracle QR", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_PINSERVER_SCAN_QR },
         { .txt = "Reset Oracle", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_PINSERVER_RESET } };
 
