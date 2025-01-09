@@ -261,7 +261,7 @@ gui_activity_t* make_bip39_passphrase_prefs_activity(
     btn_data_t menubtns[] = { { .content = *frequency_textbox, .ev_id = BTN_PASSPHRASE_FREQUENCY },
         { .content = *method_textbox, .ev_id = BTN_PASSPHRASE_METHOD } };
 
-    return make_menu_activity("BIP39 Passphrase", hdrbtns, 2, menubtns, 2);
+    return make_menu_activity("BIP39 Parolası", hdrbtns, 2, menubtns, 2);
 }
 
 gui_activity_t* make_startup_options_activity(void)
@@ -292,7 +292,7 @@ gui_activity_t* make_uninitialised_settings_activity(void)
 #ifdef CONFIG_IDF_TARGET_ESP32S3
               { .txt = "USB Storage", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_USBSTORAGE },
 #endif
-              { .txt = "BIP39 Passphrase", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_BIP39_PASSPHRASE },
+              { .txt = "BIP39 Parolası", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_BIP39_PASSPHRASE },
               { .txt = "Ayarlar", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_PREFS } };
 
     return make_menu_activity("Seçenekler", hdrbtns, 2, menubtns, sizeof(menubtns) / sizeof(btn_data_t));
@@ -304,7 +304,7 @@ gui_activity_t* make_locked_settings_activity(void)
         { .txt = NULL, .font = GUI_DEFAULT_FONT, .ev_id = GUI_BUTTON_EVENT_NONE } };
 
     btn_data_t menubtns[]
-        = { { .txt = "BIP39 Passphrase", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_BIP39_PASSPHRASE },
+        = { { .txt = "BIP39 Parolası", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_BIP39_PASSPHRASE },
               { .txt = "Device", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_DEVICE },
               { .txt = "Temporary Signer", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_TEMPORARY_WALLET_LOGIN } };
 

@@ -322,12 +322,12 @@ static void update_home_screen(gui_view_node_t* status_light, gui_view_node_t* s
     } else if (home_screen_type == HOME_SCREEN_TYPE_LOCKED) {
         gui_set_color(status_light, TFT_LIGHTGREY);
         gui_update_text(status_light, "J"); // Filled circle
-        gui_update_text(status_text, "Initialized");
+        gui_update_text(status_text, "Hazırlandı");
         gui_update_text(label, running_app_info.version);
     } else if (home_screen_type == HOME_SCREEN_TYPE_UNINIT) {
         gui_set_color(status_light, GUI_BLOCKSTREAM_BUTTONBORDER_GREY);
         gui_update_text(status_light, "J"); // Filled circle
-        gui_update_text(status_text, "Uninitialized");
+        gui_update_text(status_text, "Hazırlanmamış");
         gui_update_text(label, running_app_info.version);
     } else {
         JADE_ASSERT_MSG(false, "Unexpected home screen type: %u", home_screen_type);
