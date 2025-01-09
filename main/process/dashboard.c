@@ -93,21 +93,21 @@ static const home_menu_item_t home_menu_items[HOME_SCREEN_TYPE_NUM_STATES][NUM_H
 #ifdef CONFIG_HAS_CAMERA
         { .symbol = "2", .text = "Scan SeedQR", .btn_id = BTN_SCAN_SEEDQR },
 #endif
-        { .symbol = "3", .text = "Options", .btn_id = BTN_SETTINGS } },
+        { .symbol = "3", .text = "Seçenekler", .btn_id = BTN_SETTINGS } },
 
     // Initialised/Locked
     { { .symbol = "5", .text = "Unlock Jade", .btn_id = BTN_CONNECT },
 #ifdef CONFIG_HAS_CAMERA
         { .symbol = "2", .text = "QR Mode", .btn_id = BTN_QR_MODE },
 #endif
-        { .symbol = "3", .text = "Options", .btn_id = BTN_SETTINGS } },
+        { .symbol = "3", .text = "Seçenekler", .btn_id = BTN_SETTINGS } },
 
     // Active/Unlocked/Ready
     { { .symbol = "4", .text = "Session", .btn_id = BTN_SESSION },
 #ifdef CONFIG_HAS_CAMERA
         { .symbol = "2", .text = "Scan QR", .btn_id = BTN_SCAN_QR },
 #endif
-        { .symbol = "3", .text = "Options", .btn_id = BTN_SETTINGS } }
+        { .symbol = "3", .text = "Seçenekler", .btn_id = BTN_SETTINGS } }
 };
 
 // The device name and running firmware info, loaded at startup
