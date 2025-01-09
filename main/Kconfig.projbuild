@@ -1,0 +1,601 @@
+menu "Blockstream Jade"
+
+    config DEBUG_MODE
+        bool "Enable debug mode"
+        default n
+        help
+            Enable debug mode.
+    menu "Advanced Jade debug options"
+        visible if DEBUG_MODE
+        config DEBUG_UNATTENDED_CI
+            bool "Build for unattended testing (workflows proceed without user intervention)"
+            help
+                Automatically approve actions to enable unattended testing.
+        config DEBUG_UNATTENDED_CI_TIMEOUT_MS
+            int "Timeout after which actions confirmed and workflows proceed (ms)"
+            depends on DEBUG_UNATTENDED_CI
+            default 100 if DEBUG_UNATTENDED_CI
+            default 0
+            help
+                Time in milliseconds after which actions are automatically approved and workflows proceed.
+    endmenu
+
+    choice
+        prompt "Board type"
+        default BOARD_TYPE_JADE
+        config BOARD_TYPE_JADE
+            bool "Blockstream Jade v1 (wheel)"
+            select HAS_AXP
+            select HAS_CAMERA
+        config BOARD_TYPE_JADE_V1_1
+            bool "Blockstream Jade v1.1 (rocker)"
+            select HAS_AXP
+            select HAS_CAMERA
+        config BOARD_TYPE_JADE_V2
+            bool "Blockstream Jade v2 (esp32s3)"
+            select HAS_CAMERA
+        config BOARD_TYPE_M5_FIRE
+            bool "M5Stack Fire"
+            select HAS_IP5306
+        config BOARD_TYPE_M5_BLACK_GRAY
+            bool "M5Stack Black/Gray"
+            select HAS_IP5306
+        config BOARD_TYPE_M5_CORE2
+            bool "M5Stack Core 2"
+            select HAS_AXP
+        config BOARD_TYPE_M5_CORES3
+            bool "M5Stack Core S3"
+            select HAS_AXP
+            select HAS_CAMERA
+        config BOARD_TYPE_M5_STICKC_PLUS
+            bool "M5StickC Plus"
+            select HAS_AXP
+        config BOARD_TYPE_M5_STICKC_PLUS_2
+            bool "M5StickC Plus 2"
+        config BOARD_TYPE_TTGO_TDISPLAY
+            bool "TTGO T-DISPLAY"
+        config BOARD_TYPE_TTGO_TDISPLAYS3
+            bool "TTGO T-DISPLAYS3"
+        config BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+            bool "TTGO T-DISPLAYS3PROCAMERA"
+            select HAS_CAMERA
+        config BOARD_TYPE_TTGO_TWATCHS3
+            bool "TTGO T-WATCH S3"
+            select HAS_AXP
+        config BOARD_TYPE_QEMU
+            bool "qemu display via websocket"
+        config BOARD_TYPE_QEMU_LARGER
+            bool "qemu display via websocket with a larger display"
+        config BOARD_TYPE_CUSTOM
+            bool "Custom board"
+            select CUSTOM_PINS
+    endchoice
+
+    config DISPLAY_QEMU_IMAGE
+        depends on BOARD_TYPE_QEMU || BOARD_TYPE_QEMU_LARGER
+        string "image used for qemu"
+        default "jade"
+        default "jadel" if BOARD_TYPE_QEMU_LARGER
+
+    config DISPLAY_FULL_FRAME_BUFFER
+        depends on SPIRAM
+        bool "enables full display buffering (requires SPI ram) - faster but takes ram"
+        default y if SPIRAM && !BOARD_TYPE_QEMU && !BOARD_TYPE_QEMU_LARGER && !BOARD_TYPE_M5_FIRE
+
+    config DISPLAY_FULL_FRAME_BUFFER_DOUBLE
+        depends on DISPLAY_FULL_FRAME_BUFFER
+        bool "enables double full display buffering (requires SPI ram) - faster but takes double the ram than having a frame buffer ram"
+        default y if SPIRAM && DISPLAY_FULL_FRAME_BUFFER && !BOARD_TYPE_QEMU && !BOARD_TYPE_QEMU_LARGER && !BOARD_TYPE_M5_FIRE
+
+    config DISPLAY_TOUCHSCREEN
+        bool "Set if touchscreen is available"
+        default y if BOARD_TYPE_M5_CORES3 || BOARD_TYPE_M5_CORE2 || BOARD_TYPE_TTGO_TWATCHS3
+        default n
+
+    config DISPLAY_TOUCHSCREEN_I2C
+        depends on DISPLAY_TOUCHSCREEN
+        int "Set i2c interface 0 or 1"
+        range 0 1
+        default 1 if BOARD_TYPE_TTGO_TWATCHS3
+        default 0
+
+    config DISPLAY_SPI_CLOCK
+        int "SPI Clock"
+        default 40000000 if BOARD_TYPE_JADE_V2 || BOARD_TYPE_M5_CORES3 || BOARD_TYPE_TTGO_TWATCHS3
+        default 32000000
+
+    config DISPLAY_SPI_HOST
+        int "SPI host"
+        default 2 if BOARD_TYPE_JADE_V2 || BOARD_TYPE_M5_CORES3
+        default 1
+
+    config DISPLAY_INVERT
+        bool "Invert colors"
+        default y if BOARD_TYPE_JADE || BOARD_TYPE_JADE_V1_1 || BOARD_TYPE_JADE_V2 || \
+            BOARD_TYPE_TTGO_TDISPLAY || BOARD_TYPE_M5_STICKC_PLUS || BOARD_TYPE_M5_STICKC_PLUS_2 || \
+            BOARD_TYPE_M5_FIRE || BOARD_TYPE_TTGO_TDISPLAYS3 || BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA || \
+            BOARD_TYPE_M5_BLACK_GRAY || BOARD_TYPE_TTGO_TWATCHS3
+        help
+            Invert the colors in the dipslay. Some devices may have inverted colors depending on revision
+
+    config RETURN_CAMERA_IMAGES
+        bool "Enable return camera images, larger outbound message buffer"
+        depends on DEBUG_MODE && HAS_CAMERA
+        default n
+        help
+            Enables call to return camera images - allocates larger outbound message buffer
+
+    config HAS_AXP
+        bool "Use the AXP192 power controller"
+        depends on !BOARD_TYPE_M5_FIRE && !BOARD_TYPE_M5_BLACK_GRAY && !BOARD_TYPE_M5_STICKC_PLUS_2 && !BOARD_TYPE_TTGO_TDISPLAY && !BOARD_TYPE_TTGO_TDISPLAYS3 && !BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA || BOARD_TYPE_M5_CORE2
+        default n
+        help
+            Jade v1 (and some other devices) come with the AXP192 to manage power to ESP, display, camera
+
+    menu "SDA/SCL Pin Mapping"
+        visible if BOARD_TYPE_CUSTOM
+
+        config I2C_SDA
+            int "I2C SDA Pin"
+            default 4 if BOARD_TYPE_JADE || BOARD_TYPE_JADE_V1_1
+            default 12 if BOARD_TYPE_M5_CORES3
+            default 21 if BOARD_TYPE_M5_STICKC_PLUS || BOARD_TYPE_M5_CORE2 || BOARD_TYPE_M5_FIRE || BOARD_TYPE_M5_BLACK_GRAY
+            default 42 if BOARD_TYPE_JADE_V2
+            default 10 if BOARD_TYPE_TTGO_TWATCHS3
+            default -1
+        config I2C_SCL
+            int "I2C SCL Pin"
+            default 2 if BOARD_TYPE_JADE
+            default 11 if BOARD_TYPE_M5_CORES3 || BOARD_TYPE_TTGO_TWATCHS3
+            default 14 if BOARD_TYPE_JADE_V1_1
+            default 22 if BOARD_TYPE_M5_STICKC_PLUS || BOARD_TYPE_M5_CORE2 || BOARD_TYPE_M5_FIRE || BOARD_TYPE_M5_BLACK_GRAY
+            default 41 if BOARD_TYPE_JADE_V2
+            default -1
+        config I2C_MASTER_CLK
+            int "I2C Master Clock Speed"
+            default 10000 if BOARD_TYPE_JADE_V2 || BOARD_TYPE_M5_CORES3
+            default 40000
+        config I2C_TOUCH_SDA
+            depends on DISPLAY_TOUCHSCREEN
+            int "I2C SDA Pin touch"
+            default 12 if BOARD_TYPE_M5_CORES3
+            default 21 if BOARD_TYPE_M5_CORE2
+            default 39 if BOARD_TYPE_TTGO_TWATCHS3
+            default -1
+        config I2C_TOUCH_SCL
+            depends on DISPLAY_TOUCHSCREEN
+            int "I2C SCL Pin touch"
+            default 11 if BOARD_TYPE_M5_CORES3
+            default 40 if BOARD_TYPE_TTGO_TWATCHS3
+            default 22 if BOARD_TYPE_M5_CORE2
+            default -1
+    endmenu
+
+    config HAS_IP5306
+        bool "Use the IP5306 power controller"
+        depends on BOARD_TYPE_M5_FIRE || BOARD_TYPE_M5_BLACK_GRAY || BOARD_TYPE_CUSTOM
+        default n
+        help
+            Some devices come with the IP5306 to manage power to ESP, charge the battery, etc.
+
+    menu "Input Options"
+        visible if BOARD_TYPE_CUSTOM
+        config UI_WRAP_ALL_MENUS
+            bool "Enable Scroll Wrapping for all Menus"
+            help
+                Allows nagivation of all menus with a single button device.
+
+        config INPUT_ONE_BUTTON_MODE
+            bool "Enable One Button Input Mode"
+            help
+                Enable navigation and selection using short/long presses of the A button.
+
+        config BUTTON_B_ACTIVE_HIGH
+            bool "Configure B Button for Active High Operation"
+            help
+                Enable navigation and selection using short/long presses of the A button.
+    endmenu
+
+    menu "Input Pin Mapping"
+        visible if BOARD_TYPE_CUSTOM
+
+        config INPUT_WHEEL_A
+            int "Wheel A"
+            default 37 if BOARD_TYPE_JADE
+        config INPUT_WHEEL_B
+            int "Wheel B"
+            default 38 if BOARD_TYPE_JADE
+        config INPUT_BTN_A
+            int "BTN A"
+            default 37 if BOARD_TYPE_JADE_V1_1
+            default 38 if BOARD_TYPE_JADE_V2
+            default 39 if BOARD_TYPE_M5_FIRE || BOARD_TYPE_M5_BLACK_GRAY || BOARD_TYPE_M5_STICKC_PLUS || BOARD_TYPE_M5_STICKC_PLUS_2
+            default 0 if BOARD_TYPE_TTGO_TDISPLAY || BOARD_TYPE_TTGO_TDISPLAYS3
+            default 12 if BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+            default -1
+        config INPUT_BTN_B
+            int "BTN B"
+            default 39 if BOARD_TYPE_JADE_V1_1 || BOARD_TYPE_JADE_V2
+            default 37 if BOARD_TYPE_M5_FIRE || BOARD_TYPE_M5_BLACK_GRAY || BOARD_TYPE_M5_STICKC_PLUS
+            default 35 if BOARD_TYPE_TTGO_TDISPLAY || BOARD_TYPE_M5_STICKC_PLUS_2
+            default 14 if BOARD_TYPE_TTGO_TDISPLAYS3
+            default 16 if BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+            default -1
+        config INPUT_WHEEL_SW
+            int "Wheel SW"
+            default 33 if BOARD_TYPE_JADE
+            default 38 if BOARD_TYPE_JADE_V1_1
+            default -1
+        config INPUT_INVERT_WHEEL
+            bool "Invert wheel"
+            default n
+        config INPUT_FRONT_SW
+            int "Front switch"
+            default 21 if BOARD_TYPE_JADE
+            default 33 if BOARD_TYPE_JADE_V1_1
+            default 40 if BOARD_TYPE_JADE_V2
+            default 38 if BOARD_TYPE_M5_FIRE || BOARD_TYPE_M5_BLACK_GRAY
+            default 37 if BOARD_TYPE_M5_STICKC_PLUS_2
+            default 0 if BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+            default -1
+    endmenu
+
+    config JADE_USE_USB_JTAG_SERIAL
+        bool "Use USB JTAG serial instead of CDC tinyusb"
+        depends on IDF_TARGET_ESP32S3
+        help
+            Enables USB JTAG serial rather than CDC tinyusb, implies no tinyusb/host storage/etc
+            default n
+
+    config HAS_CAMERA
+        bool "Enable Camera Functions"
+        help
+            Enables camera functionality
+            default y if BOARD_TYPE_JADE_V2 || BOARD_TYPE_JADE_V1_1 || BOARD_TYPE_JADE || (ETH_USE_OPENETH && HTTPD_WS_SUPPORT) || BOARD_TYPE_M5_CORES3 || BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+
+    menu "Camera Orientation"
+        visible if HAS_CAMERA && BOARD_TYPE_CUSTOM
+
+        config CAMERA_ROTATE_90
+            bool "Rotate Camera Image by 90 degrees"
+            default n if BOARD_TYPE_M5_CORES3 || BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+            default y
+
+        config CAMERA_ROTATE_180
+            bool "Rotate Camera Image by 180 degrees"
+            default y if BOARD_TYPE_M5_CORES3
+            default n
+
+        config CAMERA_ROTATE_270
+            bool "Rotate Camera Image by 270 degrees"
+            default y if BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+            default n
+
+        config CAMERA_FRONT_FACING
+            bool "Front-facing camera"
+            default y if BOARD_TYPE_M5_CORES3
+            default n
+
+    endmenu
+
+    menu "Camera Pin Mapping"
+        visible if HAS_CAMERA && (BOARD_TYPE_CUSTOM || BOARD_TYPE_M5_CORES3)
+
+        config CAMERA_D0
+            int "Camera pin D0"
+            default 13 if BOARD_TYPE_JADE_V2
+            default 39 if BOARD_TYPE_M5_CORES3
+            default 45 if BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+            default 32
+        config CAMERA_D1
+            int "Camera pin D1"
+            default 15 if BOARD_TYPE_JADE_V2
+            default 40 if BOARD_TYPE_M5_CORES3
+            default 41 if BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+            default 35
+        config CAMERA_D2
+            int "Camera pin D2"
+            default 16 if BOARD_TYPE_JADE_V2
+            default 41 if BOARD_TYPE_M5_CORES3
+            default 40 if BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+            default 34
+        config CAMERA_D3
+            int "Camera pin D3"
+            default 14 if BOARD_TYPE_JADE_V2
+            default 42 if BOARD_TYPE_M5_CORES3 || BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+            default 5
+        config CAMERA_D4
+            int "Camera pin D4"
+            default 39 if BOARD_TYPE_JADE
+            default 15 if BOARD_TYPE_JADE_V1_1 || BOARD_TYPE_M5_CORES3
+            default 12 if BOARD_TYPE_JADE_V2
+            default 1 if BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+            default -1
+        config CAMERA_D5
+            int "Camera pin D5"
+            default 10 if BOARD_TYPE_JADE_V2
+            default 16 if BOARD_TYPE_M5_CORES3
+            default 3 if BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+            default 18
+        config CAMERA_D6
+            int "Camera pin D6"
+            default 9 if BOARD_TYPE_JADE_V2
+            default 48 if BOARD_TYPE_M5_CORES3
+            default 10 if BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+            default 36
+        config CAMERA_D7
+            int "Camera pin D7"
+            default 6 if BOARD_TYPE_JADE_V2
+            default 47 if BOARD_TYPE_M5_CORES3
+            default 4 if BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+            default 19
+
+        config CAMERA_XCLK
+            int "Camera XCLK"
+            default 8 if BOARD_TYPE_JADE_V2
+            default -1 if BOARD_TYPE_M5_CORES3
+            default 11 if BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+            default 27
+        config CAMERA_XCLK_FREQ
+            int "Camera XCLK frequency"
+            default "16000000" if BOARD_TYPE_JADE_V2 || BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA || BOARD_TYPE_M5_CORES3
+            default "20000000"
+
+        config CAMERA_PCLK
+            int "Camera PCLK"
+            default 0 if BOARD_TYPE_JADE
+            default 21 if BOARD_TYPE_JADE_V1_1
+            default 11 if BOARD_TYPE_JADE_V2
+            default 45 if BOARD_TYPE_M5_CORES3
+            default 2 if BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+            default -1
+
+        config CAMERA_VSYNC
+            int "Camera VSYNC"
+            default 4 if BOARD_TYPE_JADE_V2
+            default 46 if BOARD_TYPE_M5_CORES3
+            default 7 if BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+            default 22
+
+        config CAMERA_HREF
+            int "Camera HREF"
+            default 7 if BOARD_TYPE_JADE_V2
+            default 38 if BOARD_TYPE_M5_CORES3
+            default 15 if BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+            default 26
+
+        config CAMERA_SDA
+            int "Camera SDA"
+            default 1 if BOARD_TYPE_JADE_V2
+            default 12 if BOARD_TYPE_M5_CORES3
+            default 5 if BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+            default 25
+        config CAMERA_SCL
+            int "Camera SCL"
+            default 2 if BOARD_TYPE_JADE_V2
+            default 11 if BOARD_TYPE_M5_CORES3
+            default 6 if BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+            default 23
+
+        config CAMERA_RESET
+            int "Camera RESET"
+            default 3 if BOARD_TYPE_JADE_V2
+            default -1
+
+        config CAMERA_PWDN
+            int "Camera PWDN"
+            default 5 if BOARD_TYPE_JADE_V2
+            default 46 if BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+            default -1
+
+    endmenu
+
+    menu "Display Driver"
+        visible if BOARD_TYPE_CUSTOM
+
+        config DISPLAY_WIDTH
+            int "Display width in pixels"
+            range 0 640
+            default 320 if BOARD_TYPE_QEMU_LARGER || BOARD_TYPE_M5_FIRE || BOARD_TYPE_M5_BLACK_GRAY || BOARD_TYPE_TTGO_TDISPLAYS3 || BOARD_TYPE_M5_CORES3 || BOARD_TYPE_M5_CORE2 || BOARD_TYPE_JADE_V2
+            default 480 if BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+            default 240
+        config DISPLAY_HEIGHT
+            int "Display height in pixels"
+            range 0 640
+            default 135 if BOARD_TYPE_JADE || BOARD_TYPE_JADE_V1_1 || BOARD_TYPE_TTGO_TDISPLAY || BOARD_TYPE_M5_STICKC_PLUS || BOARD_TYPE_M5_STICKC_PLUS_2
+            default 240 if BOARD_TYPE_M5_FIRE || BOARD_TYPE_M5_BLACK_GRAY || BOARD_TYPE_M5_CORE2
+            default 170 if BOARD_TYPE_JADE_V2 || BOARD_TYPE_QEMU_LARGER || BOARD_TYPE_TTGO_TDISPLAYS3
+            default 200 if BOARD_TYPE_M5_CORES3 || BOARD_TYPE_TTGO_TWATCHS3
+            default 222 if BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+            default 135
+        config DCS_ADDRESS_MODE_BGR_SELECTED
+            bool "BGR"
+            default y if BOARD_TYPE_M5_FIRE || BOARD_TYPE_M5_BLACK_GRAY || BOARD_TYPE_M5_CORES3 || BOARD_TYPE_M5_CORE2 || BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+        config DCS_ADDRESS_MODE_MIRROR_X_SELECTED
+            bool "Mirror X"
+            default y if BOARD_TYPE_JADE || BOARD_TYPE_JADE_V1_1 || BOARD_TYPE_JADE_V2 || \
+                BOARD_TYPE_TTGO_TDISPLAY || BOARD_TYPE_M5_STICKC_PLUS || BOARD_TYPE_M5_STICKC_PLUS_2 || BOARD_TYPE_TTGO_TDISPLAYS3 || BOARD_TYPE_TTGO_TWATCHS3
+            default n if BOARD_TYPE_M5_FIRE || BOARD_TYPE_M5_BLACK_GRAY || BOARD_TYPE_M5_CORES3 || BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+        config DCS_ADDRESS_MODE_MIRROR_Y_SELECTED
+            bool "Mirror Y"
+            default y if BOARD_TYPE_TTGO_TWATCHS3
+            default n
+        config DCS_ADDRESS_MODE_SWAP_XY_SELECTED
+            bool "Swap X and Y"
+            default y if BOARD_TYPE_JADE || BOARD_TYPE_JADE_V1_1 || BOARD_TYPE_JADE_V2
+            default y if BOARD_TYPE_TTGO_TDISPLAY || BOARD_TYPE_M5_STICKC_PLUS || BOARD_TYPE_M5_STICKC_PLUS_2 || BOARD_TYPE_TTGO_TDISPLAYS3 || BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+            default n if BOARD_TYPE_M5_FIRE || BOARD_TYPE_M5_BLACK_GRAY || BOARD_TYPE_M5_CORES3 || BOARD_TYPE_TTGO_TWATCHS3
+        config DISPLAY_OFFSET_X
+            int "X offset"
+            default 0 if BOARD_TYPE_JADE_V2
+            default 0 if BOARD_TYPE_M5_FIRE || BOARD_TYPE_M5_BLACK_GRAY || BOARD_TYPE_TTGO_TDISPLAYS3 || BOARD_TYPE_TTGO_TWATCHS3
+            default 0 if BOARD_TYPE_M5_CORES3 || BOARD_TYPE_M5_CORE2 || BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+            default 40
+            help
+                Adjust when using small display and image is not centered.
+        config DISPLAY_OFFSET_Y
+            int "Y offset"
+            default 0 if BOARD_TYPE_M5_FIRE || BOARD_TYPE_M5_BLACK_GRAY || BOARD_TYPE_M5_CORES3 || BOARD_TYPE_M5_CORE2
+            default 35 if BOARD_TYPE_JADE_V2 || BOARD_TYPE_TTGO_TDISPLAYS3
+            default 49 if BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+            default 80 if BOARD_TYPE_TTGO_TWATCHS3
+            default 53
+            help
+                Adjust when using small display and image is not centered.
+        menu "Display Pin mapping"
+            config DISPLAY_PIN_MISO
+                int "MISO pin number"
+                default 2 if BOARD_TYPE_TTGO_TDISPLAY
+                default 19 if BOARD_TYPE_M5_FIRE || BOARD_TYPE_M5_BLACK_GRAY
+                default 38 if BOARD_TYPE_M5_CORE2
+                default 8 if BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+                default -1
+            config DISPLAY_PIN_MOSI
+                int "MOSI pin number"
+                default 2 if BOARD_TYPE_JADE_V1_1
+                default 17 if BOARD_TYPE_JADE_V2
+                default 15 if BOARD_TYPE_JADE || BOARD_TYPE_M5_STICKC_PLUS || BOARD_TYPE_M5_STICKC_PLUS_2
+                default 19 if BOARD_TYPE_TTGO_TDISPLAY
+                default 23 if BOARD_TYPE_M5_FIRE || BOARD_TYPE_M5_BLACK_GRAY || BOARD_TYPE_M5_CORE2
+                default 37 if BOARD_TYPE_M5_CORES3
+                default 17 if BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+                default 13 if BOARD_TYPE_TTGO_TWATCHS3
+                default -1
+            config DISPLAY_PIN_CLK
+                int "CLK pin number"
+                default 14 if BOARD_TYPE_JADE
+                default 12 if BOARD_TYPE_JADE_V1_1
+                default 47 if BOARD_TYPE_JADE_V2
+                default 13 if BOARD_TYPE_M5_STICKC_PLUS || BOARD_TYPE_M5_STICKC_PLUS_2
+                default 18 if BOARD_TYPE_M5_FIRE || BOARD_TYPE_M5_BLACK_GRAY || BOARD_TYPE_TTGO_TDISPLAY || BOARD_TYPE_M5_CORE2 || BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA || BOARD_TYPE_TTGO_TWATCHS3
+                default 36 if BOARD_TYPE_M5_CORES3
+                default -1
+            config DISPLAY_PIN_CS
+                int "CS pin number"
+                default 13 if BOARD_TYPE_JADE
+                default 0 if BOARD_TYPE_JADE_V1_1
+                default 21 if BOARD_TYPE_JADE_V2
+                default 3 if BOARD_TYPE_M5_CORES3
+                default 5 if BOARD_TYPE_TTGO_TDISPLAY || BOARD_TYPE_M5_STICKC_PLUS || BOARD_TYPE_M5_STICKC_PLUS_2 || BOARD_TYPE_M5_CORE2
+                default 14 if BOARD_TYPE_M5_FIRE || BOARD_TYPE_M5_BLACK_GRAY
+                default 39 if BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+                default 12 if BOARD_TYPE_TTGO_TWATCHS3
+                default -1
+            config DISPLAY_PIN_DC
+                int "DC pin number"
+                default 12 if BOARD_TYPE_JADE
+                default 13 if BOARD_TYPE_JADE_V1_1
+                default 48 if BOARD_TYPE_JADE_V2
+                default 15 if BOARD_TYPE_M5_CORE2
+                default 16 if BOARD_TYPE_TTGO_TDISPLAY
+                default 23 if BOARD_TYPE_M5_STICKC_PLUS
+                default 14 if BOARD_TYPE_M5_STICKC_PLUS_2
+                default 27 if BOARD_TYPE_M5_FIRE || BOARD_TYPE_M5_BLACK_GRAY
+                default 35 if BOARD_TYPE_M5_CORES3
+                default 9 if BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+                default 38 if BOARD_TYPE_TTGO_TWATCHS3
+                default -1
+            config DISPLAY_PIN_RST
+                int "RST pin number"
+                default 21 if BOARD_TYPE_JADE
+                default 46 if BOARD_TYPE_JADE_V2
+                default 18 if BOARD_TYPE_M5_STICKC_PLUS
+                default 12 if BOARD_TYPE_M5_STICKC_PLUS_2
+                default 23 if BOARD_TYPE_TTGO_TDISPLAY
+                default 33 if BOARD_TYPE_M5_FIRE || BOARD_TYPE_M5_BLACK_GRAY
+                default 47 if BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+                default -1
+            config DISPLAY_PIN_BL
+                int "Backlight pin number"
+                default 4 if BOARD_TYPE_TTGO_TDISPLAY
+                default 32 if BOARD_TYPE_M5_FIRE || BOARD_TYPE_M5_BLACK_GRAY
+                default 27 if BOARD_TYPE_M5_STICKC_PLUS_2
+                default 48 if BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA
+                default 45 if BOARD_TYPE_TTGO_TWATCHS3
+                default -1
+            config PIN_NUM_DC
+                int "DC pin number"
+                default 7 if BOARD_TYPE_TTGO_TDISPLAYS3
+                default -1
+            config PIN_NUM_WR
+                int "WR pin number"
+                default 8 if BOARD_TYPE_TTGO_TDISPLAYS3
+                default -1
+            config PIN_NUM_CS
+                int "CS pin number"
+                default 6 if BOARD_TYPE_TTGO_TDISPLAYS3
+                default -1
+            config PIN_NUM_DATA0
+                int "DATA0 pin number"
+                default 39 if BOARD_TYPE_TTGO_TDISPLAYS3
+                default -1
+            config PIN_NUM_DATA1
+                int "DATA1 pin number"
+                default 40 if BOARD_TYPE_TTGO_TDISPLAYS3
+                default -1
+            config PIN_NUM_DATA2
+                int "DATA2 pin number"
+                default 41 if BOARD_TYPE_TTGO_TDISPLAYS3
+                default -1
+            config PIN_NUM_DATA3
+                int "DATA3 pin number"
+                default 42 if BOARD_TYPE_TTGO_TDISPLAYS3
+                default -1
+            config PIN_NUM_DATA4
+                int "DATA4 pin number"
+                default 45 if BOARD_TYPE_TTGO_TDISPLAYS3
+                default -1
+            config PIN_NUM_DATA5
+                int "DATA5 pin number"
+                default 46 if BOARD_TYPE_TTGO_TDISPLAYS3
+                default -1
+            config PIN_NUM_DATA6
+                int "DATA6 pin number"
+                default 47 if BOARD_TYPE_TTGO_TDISPLAYS3
+                default -1
+            config PIN_NUM_DATA7
+                int "DATA7 pin number"
+                default 48 if BOARD_TYPE_TTGO_TDISPLAYS3
+                default -1
+            config LCD_PIXEL_CLOCK_HZ
+                int "LCD pixel clock Hz"
+                default 2000000 if BOARD_TYPE_TTGO_TDISPLAYS3
+                default -1
+            config LCD_CMD_BITS
+                int "LCD CMD bits"
+                default 8 if BOARD_TYPE_TTGO_TDISPLAYS3
+                default -1
+            config LCD_PARAM_BITS
+                int "LCD PARAM bits"
+                default 8 if BOARD_TYPE_TTGO_TDISPLAYS3
+                default -1
+            config PIN_NUM_RST
+                int "RST pin number"
+                default 5 if BOARD_TYPE_TTGO_TDISPLAYS3
+                default -1
+            config PSRAM_DATA_ALIGNMENT
+                int "PSRAM data alignment"
+                default 64 if BOARD_TYPE_TTGO_TDISPLAYS3
+                default -1
+            config LCD_POWER_PIN_NUM
+                int "LCD power pin number"
+                default 15 if BOARD_TYPE_TTGO_TDISPLAYS3
+                default -1
+            config LCD_RD_PIN_NUM
+                int "LCD RD pin number"
+                default 9 if BOARD_TYPE_TTGO_TDISPLAYS3
+                default -1
+            config LCD_BACKLIGHT_PIN_NUM
+                int "LCD backlight pin number"
+                default 38 if BOARD_TYPE_TTGO_TDISPLAYS3
+                default -1
+        endmenu
+    endmenu
+
+    config JADE_QA
+        bool "Enable smoketest firmware"
+        default n
+        help
+            Enable smoketest firmware.
+
+endmenu

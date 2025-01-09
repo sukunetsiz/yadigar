@@ -1,0 +1,16 @@
+pins
+pinsdir
+build
+sdkconfig
+sdkconfig.defaults
+sdkconfig.old
+*.pin
+*.swp
+__pycache__
+main/autogen_lang.*
+tools/bsdiff
+.idea/
+managed_components/
+.DS_Store
+dist/
+jade_client.egg-info/

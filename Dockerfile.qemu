@@ -1,0 +1,28 @@
+FROM blockstream/verde@sha256:c6b59066998c138c7e43a8bc12ed6f9e83ebe3476ab4c5b73619390c495ab948 as builder
+
+ARG SDK_CONFIG=configs/sdkconfig_qemu_psram.defaults
+
+WORKDIR /jade
+
+COPY . .
+RUN cp ${SDK_CONFIG} sdkconfig.defaults
+RUN . /root/esp/esp-idf/export.sh && idf.py all
+RUN ./tools/fwprep.py build/jade.bin build
+
+ENV PATH=$PATH:/jade/main/qemu
+RUN make-flash-img.sh
+
+FROM debian:bookworm@sha256:b8084b1a576c5504a031936e1132574f4ce1d6cc7130bbcc25a28f074539ae6b
+
+RUN apt-get update -yqq && apt-get install -yqq libpixman-1-dev libglib2.0-dev libslirp-dev libncurses-dev
+
+COPY --from=builder /flash_image.bin /flash_image.bin
+COPY --from=builder /qemu_efuse.bin /qemu_efuse.bin
+
+COPY --from=builder /opt/bin/qemu-system-xtensa /opt/bin/qemu-system-xtensa
+COPY --from=builder /opt/share/qemu /opt/share/qemu
+COPY --from=builder /jade/main/qemu/ /jade/main/qemu/
+
+ENV PATH=$PATH:/jade/main/qemu
+
+CMD [ "qemu_run.sh" ]

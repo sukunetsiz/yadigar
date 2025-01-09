@@ -1,0 +1,12 @@
+{
+  "input": {
+    "multisig_file": "multisig_file_sparrow.dat"
+  },
+  "expected_result": {
+    "multisig_name": "Jade_File_Test",
+    "variant": "wsh(multi(k))",
+    "sorted": true,
+    "threshold": 3,
+    "num_signers": 3
+  }
+}
