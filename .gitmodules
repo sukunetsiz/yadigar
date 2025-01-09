@@ -1,6 +1,6 @@
 [submodule "components/libwally-core/upstream"]
 	path = components/libwally-core/upstream
-	url = https://github.com/elementsProject/libwally-core
+	url = https://github.com/ElementsProject/libwally-core.git
 [submodule "pinserver"]
 	path = pinserver
 	url = https://github.com/Blockstream/blind_pin_server
