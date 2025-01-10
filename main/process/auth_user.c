@@ -103,7 +103,7 @@ static bool get_pin_get_aeskey(jade_process_t* process, const char* title, uint8
     memcpy(pin, pin_insert.pin, sizeof(pin_insert.pin));
     SENSITIVE_POP(&pin_insert);
 
-    const char* message[] = { "Checking..." };
+    const char* message[] = { "Kontrol Ediliyor..." };
     display_message_activity(message, 1);
 
     // Do the pinserver 'getpin' process
@@ -205,7 +205,7 @@ static bool get_pin_load_keys(jade_process_t* process, const bool suppress_pin_c
     SENSITIVE_PUSH(aeskey, sizeof(aeskey));
 
     // Do the pinserver 'getpin' process
-    const char* unlock_pin_msg = suppress_pin_change_confirmation ? "Enter Current PIN" : "Parola Girin...";
+    const char* unlock_pin_msg = suppress_pin_change_confirmation ? "Enter Current PIN" : "Parola Girin";
     if (!get_pin_get_aeskey(process, unlock_pin_msg, pin, sizeof(pin), aeskey, sizeof(aeskey))) {
         // User abandoned entering PIN, or some sort of server or networking/connection error
         // NOTE: reply message will have already been sent

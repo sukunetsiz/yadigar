@@ -425,7 +425,7 @@ gui_activity_t* display_message_activity(const char* message[], const size_t mes
 
 gui_activity_t* display_processing_message_activity()
 {
-    const char* message[] = { "Processing..." };
+    const char* message[] = { "Bekleyin..." };
     return display_message_activity(message, 1);
 }
 

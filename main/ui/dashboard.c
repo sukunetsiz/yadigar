@@ -269,7 +269,7 @@ gui_activity_t* make_startup_options_activity(void)
     btn_data_t hdrbtns[] = { { .txt = "=", .font = JADE_SYMBOLS_16x16_FONT, .ev_id = BTN_SETTINGS_EXIT },
         { .txt = NULL, .font = GUI_DEFAULT_FONT, .ev_id = GUI_BUTTON_EVENT_NONE } };
 
-    btn_data_t menubtns[] = { { .txt = "Factory Reset", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_RESET },
+    btn_data_t menubtns[] = { { .txt = "KığĞüÜşŞİöÖçÇ", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_RESET },
         { .txt = "Blind Oracle", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_PINSERVER },
         { .txt = "Legal", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_LEGAL } };
 
@@ -356,7 +356,7 @@ gui_activity_t* make_device_settings_activity(void)
         { .txt = NULL, .font = GUI_DEFAULT_FONT, .ev_id = GUI_BUTTON_EVENT_NONE } };
 
     btn_data_t menubtns[] = { { .txt = "Ayarlar", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_PREFS },
-        { .txt = "Factory Reset", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_RESET },
+        { .txt = "KığĞüÜşŞİöÖçÇ", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_RESET },
         { .txt = "Bilgi", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_INFO } };
 
     return make_menu_activity("Cihaz", hdrbtns, 2, menubtns, 3);
@@ -533,14 +533,14 @@ gui_activity_t* make_session_activity(void)
     btn_data_t hdrbtns[] = { { .txt = "=", .font = JADE_SYMBOLS_16x16_FONT, .ev_id = BTN_SESSION_EXIT },
         { .txt = NULL, .font = GUI_DEFAULT_FONT, .ev_id = GUI_BUTTON_EVENT_NONE } };
 
-    btn_data_t menubtns[] = { { .txt = "Logout", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SESSION_LOGOUT }
+    btn_data_t menubtns[] = { { .txt = "Oturumu Kapat", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SESSION_LOGOUT }
 #ifndef CONFIG_ETH_USE_OPENETH
         ,
-        { .txt = "Sleep", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SESSION_SLEEP }
+        { .txt = "Uyku Hali", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SESSION_SLEEP }
 #endif
     };
 
-    return make_menu_activity("Session", hdrbtns, 2, menubtns, 2);
+    return make_menu_activity("Oturum", hdrbtns, 2, menubtns, 2);
 }
 
 gui_activity_t* make_ble_activity(gui_view_node_t** ble_status_item)

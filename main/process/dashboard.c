@@ -93,21 +93,21 @@ static const home_menu_item_t home_menu_items[HOME_SCREEN_TYPE_NUM_STATES][NUM_H
 #ifdef CONFIG_HAS_CAMERA
         { .symbol = "2", .text = "Scan SeedQR", .btn_id = BTN_SCAN_SEEDQR },
 #endif
-        { .symbol = "3", .text = "Seçenekler", .btn_id = BTN_SETTINGS } },
+        { .symbol = "3", .text = "Ayarlar", .btn_id = BTN_SETTINGS } },
 
     // Initialised/Locked
     { { .symbol = "5", .text = "Unlock Jade", .btn_id = BTN_CONNECT },
 #ifdef CONFIG_HAS_CAMERA
         { .symbol = "2", .text = "QR Mode", .btn_id = BTN_QR_MODE },
 #endif
-        { .symbol = "3", .text = "Seçenekler", .btn_id = BTN_SETTINGS } },
+        { .symbol = "3", .text = "Ayarlar", .btn_id = BTN_SETTINGS } },
 
     // Active/Unlocked/Ready
-    { { .symbol = "4", .text = "Session", .btn_id = BTN_SESSION },
+    { { .symbol = "4", .text = "Oturum", .btn_id = BTN_SESSION },
 #ifdef CONFIG_HAS_CAMERA
         { .symbol = "2", .text = "Scan QR", .btn_id = BTN_SCAN_QR },
 #endif
-        { .symbol = "3", .text = "Seçenekler", .btn_id = BTN_SETTINGS } }
+        { .symbol = "3", .text = "Ayarlar", .btn_id = BTN_SETTINGS } }
 };
 
 // The device name and running firmware info, loaded at startup
@@ -309,7 +309,7 @@ static void update_home_screen(gui_view_node_t* status_light, gui_view_node_t* s
     if (home_screen_type == HOME_SCREEN_TYPE_ACTIVE) {
         gui_set_color(status_light, gui_get_highlight_color());
         gui_update_text(status_light, keychain_has_temporary() ? "N" : "J"); // Clock or Filled circle
-        gui_update_text(status_text, "Active");
+        gui_update_text(status_text, "Aktif");
 
         // Wallet fingerprint in uppercase hex
         char* fphex = NULL;
@@ -322,12 +322,12 @@ static void update_home_screen(gui_view_node_t* status_light, gui_view_node_t* s
     } else if (home_screen_type == HOME_SCREEN_TYPE_LOCKED) {
         gui_set_color(status_light, TFT_LIGHTGREY);
         gui_update_text(status_light, "J"); // Filled circle
-        gui_update_text(status_text, "Hazırlandı");
+        gui_update_text(status_text, "Kuruldu");
         gui_update_text(label, running_app_info.version);
     } else if (home_screen_type == HOME_SCREEN_TYPE_UNINIT) {
         gui_set_color(status_light, GUI_BLOCKSTREAM_BUTTONBORDER_GREY);
         gui_update_text(status_light, "J"); // Filled circle
-        gui_update_text(status_text, "Hazırlanmamış");
+        gui_update_text(status_text, "Beklemede");
         gui_update_text(label, running_app_info.version);
     } else {
         JADE_ASSERT_MSG(false, "Unexpected home screen type: %u", home_screen_type);
