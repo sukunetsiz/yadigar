@@ -83,14 +83,14 @@ struct {
     gui_view_node_t* root;
 
     gui_view_node_t* title;
-    gui_view_node_t* battery_text;
+//  gui_view_node_t* battery_text;
     gui_view_node_t* usb_text;
     gui_view_node_t* ble_text;
 
-    uint8_t last_battery_val;
+//  uint8_t last_battery_val;
     bool last_usb_val;
     bool last_ble_val;
-    uint8_t battery_update_counter;
+//  uint8_t battery_update_counter;
 
     TaskHandle_t task_handle;
 
@@ -180,9 +180,9 @@ static void make_status_bar(void)
     gui_set_align(status_bar.ble_text, GUI_ALIGN_CENTER, GUI_ALIGN_MIDDLE);
     gui_set_parent(status_bar.ble_text, status_parent);
 
-    gui_make_text_font(&status_bar.battery_text, "0", TFT_WHITE, JADE_SYMBOLS_16x32_FONT);
-    gui_set_align(status_bar.battery_text, GUI_ALIGN_RIGHT, GUI_ALIGN_MIDDLE);
-    gui_set_parent(status_bar.battery_text, status_parent);
+//  gui_make_text_font(&status_bar.battery_text, "0", TFT_WHITE, JADE_SYMBOLS_16x32_FONT);
+//  gui_set_align(status_bar.battery_text, GUI_ALIGN_RIGHT, GUI_ALIGN_MIDDLE);
+//  gui_set_parent(status_bar.battery_text, status_parent);
 
     JADE_ASSERT(name_parent);
     JADE_ASSERT(name_parent->kind == FILL);
@@ -2168,22 +2168,22 @@ static bool update_status_bar(const bool force_redraw)
         }
     }
 
-    if (status_bar.battery_update_counter == 0) {
-        uint8_t new_bat = power_get_battery_status();
-        color_t color = new_bat == 0 ? TFT_RED : new_bat == 1 ? TFT_ORANGE : TFT_WHITE;
-        if (power_get_battery_charging()) {
-            new_bat = new_bat + 12;
-        }
-        if (new_bat != status_bar.last_battery_val) {
-            status_bar.last_battery_val = new_bat;
-            gui_set_color(status_bar.battery_text, color);
-            gui_update_text_node_text(status_bar.battery_text, (char[]){ new_bat + '0', '\0' });
-            status_bar.updated = true;
-        }
-        status_bar.battery_update_counter = 60;
-    }
-
-    status_bar.battery_update_counter--;
+//    if (status_bar.battery_update_counter == 0) {
+//       uint8_t new_bat = power_get_battery_status();
+//        color_t color = new_bat == 0 ? TFT_RED : new_bat == 1 ? TFT_ORANGE : TFT_WHITE;
+//        if (power_get_battery_charging()) {
+//            new_bat = new_bat + 12;
+//        }
+//        if (new_bat != status_bar.last_battery_val) {
+//            status_bar.last_battery_val = new_bat;
+//            gui_set_color(status_bar.battery_text, color);
+//            gui_update_text_node_text(status_bar.battery_text, (char[]){ new_bat + '0', '\0' });
+//            status_bar.updated = true;
+//        }
+//        status_bar.battery_update_counter = 60;
+//    }
+//
+//    status_bar.battery_update_counter--;
 
     if (status_bar.updated || force_redraw) {
         render_node(status_bar.root, status_bar_cs, 0);

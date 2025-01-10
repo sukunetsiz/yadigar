@@ -290,7 +290,7 @@ gui_activity_t* make_uninitialised_settings_activity(void)
     btn_data_t menubtns[]
         = { 
 #ifdef CONFIG_IDF_TARGET_ESP32S3
-              { .txt = "USB Storage", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_USBSTORAGE },
+              { .txt = "USB Depolama", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_USBSTORAGE },
 #endif
               { .txt = "BIP39 Kelimeleri", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_BIP39_PASSPHRASE },
               { .txt = "Ayarlar", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_PREFS } };
@@ -315,7 +315,7 @@ gui_activity_t* make_unlocked_settings_activity(void)
     btn_data_t menubtns[] = { { .txt = "Wallet", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_WALLET },
         { .txt = "Cihaz", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_DEVICE },
 #ifdef CONFIG_IDF_TARGET_ESP32S3
-        { .txt = "USB Storage", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_USBSTORAGE },
+        { .txt = "USB Depolama", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_USBSTORAGE },
 #endif
         { .txt = "Authentication", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_AUTHENTICATION } };
 
@@ -346,7 +346,7 @@ gui_activity_t* make_usbstorage_settings_activity(const bool unlocked)
         //{ .txt = "Export", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_USBSTORAGE_EXPORT },
     };
 
-    return make_menu_activity("USB Storage", hdrbtns, 2, menubtns, unlocked ? 2 : 1);
+    return make_menu_activity("USB Depolama", hdrbtns, 2, menubtns, unlocked ? 2 : 1);
 }
 #endif
 
@@ -627,7 +627,7 @@ gui_activity_t* make_device_info_activity(void)
 
     btn_data_t menubtns[] = { { .txt = "MAC Address", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_DEVICE_INFO_MAC },
         { .txt = "Battery Volts", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_DEVICE_INFO_BATTERY },
-        { .txt = "Storage", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_DEVICE_INFO_STORAGE } };
+        { .txt = "Depolama", .font = GUI_DEFAULT_FONT, .ev_id = BTN_SETTINGS_DEVICE_INFO_STORAGE } };
 
     return make_menu_activity("Cihaz Bilgisi", hdrbtns, 2, menubtns, 3);
 }
@@ -785,7 +785,7 @@ gui_activity_t* make_storage_stats_activity(const size_t entries_used, const siz
               { .txt = NULL, .font = GUI_DEFAULT_FONT, .ev_id = GUI_BUTTON_EVENT_NONE } };
 
     gui_activity_t* const act = gui_make_activity();
-    gui_view_node_t* const parent = add_title_bar(act, "Storage", hdrbtns, 2, NULL);
+    gui_view_node_t* const parent = add_title_bar(act, "Depolama", hdrbtns, 2, NULL);
     gui_view_node_t* hsplit;
     gui_view_node_t* node;
 
