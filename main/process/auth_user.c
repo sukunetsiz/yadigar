@@ -205,7 +205,7 @@ static bool get_pin_load_keys(jade_process_t* process, const bool suppress_pin_c
     SENSITIVE_PUSH(aeskey, sizeof(aeskey));
 
     // Do the pinserver 'getpin' process
-    const char* unlock_pin_msg = suppress_pin_change_confirmation ? "Enter Current PIN" : "Unlock Jade";
+    const char* unlock_pin_msg = suppress_pin_change_confirmation ? "Enter Current PIN" : "Parola Girin...";
     if (!get_pin_get_aeskey(process, unlock_pin_msg, pin, sizeof(pin), aeskey, sizeof(aeskey))) {
         // User abandoned entering PIN, or some sort of server or networking/connection error
         // NOTE: reply message will have already been sent
@@ -214,14 +214,14 @@ static bool get_pin_load_keys(jade_process_t* process, const bool suppress_pin_c
 
     // Load wallet master key from flash
     if (!keychain_load(aeskey, sizeof(aeskey))) {
-        JADE_LOGE("Failed to load keys - Incorrect PIN");
+        JADE_LOGE("Failed to load keys - Tekrar Deneyin");
 
         // Handle this being the 'erase' pin
         check_wallet_erase_pin(process, pin, sizeof(pin));
 
         jade_process_reply_to_message_fail(process);
 
-        const char* message[] = { "Incorrect PIN!" };
+        const char* message[] = { "Tekrar Deneyin!" };
         await_error_activity(message, 1);
         goto cleanup;
     }

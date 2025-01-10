@@ -2604,7 +2604,7 @@ gui_activity_t* gui_display_splash(void)
         Picture* const pic = get_picture(splashstart, splashend);
         gui_make_picture(&splash_node, pic);
 #else
-        gui_make_text(&splash_node, "Yadigar", TFT_WHITE);
+        gui_make_text(&splash_node, "Yadigar", TFT_DARKCYAN);
 #endif
         gui_set_align(splash_node, GUI_ALIGN_CENTER, GUI_ALIGN_MIDDLE);
         gui_set_parent(splash_node, act->root_node);
